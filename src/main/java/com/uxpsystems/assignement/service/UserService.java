@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.uxpsystems.assignement.dao.UserDAO;
+import com.uxpsystems.assignement.exception.UserException;
 import com.uxpsystems.assignement.model.User;
 
 @Service
@@ -27,7 +28,7 @@ public class UserService {
 		userDAO.delete(user);
 	}
 
-	public User saveUser(User user) {
+	public User saveUser(User user) throws UserException {
 		return userDAO.save(user);
 	}
 

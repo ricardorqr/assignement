@@ -49,7 +49,11 @@ public class UserController {
 
 	@PostMapping("/users")
 	public User saveUser(@RequestBody User user) {
-		return userService.saveUser(user);
+		try {
+			return userService.saveUser(user);
+		} catch (Exception e) {
+			throw new UserException(e.getMessage());
+		}
 	}
 
 	@PutMapping("/users/{id}")
