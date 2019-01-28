@@ -11,18 +11,18 @@ import com.uxpsystems.assignement.model.User;
 
 @Service
 public class UserService {
-	
+
 	@Autowired
 	private UserDAO userDAO;
-	
-	public  List<User> getAllUsers() {
+
+	public List<User> getAllUsers() {
 		return (List<User>) userDAO.findAll();
 	}
-	
-	public  Optional<User> getUserById(User user) {
-		return userDAO.findById(user.getId());
+
+	public Optional<User> getUserById(long id) {
+		return userDAO.findById(id);
 	}
-	
+
 	public void deleteUser(User user) {
 		userDAO.delete(user);
 	}

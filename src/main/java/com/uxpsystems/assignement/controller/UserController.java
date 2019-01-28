@@ -1,13 +1,9 @@
 package com.uxpsystems.assignement.controller;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-import javax.jws.soap.SOAPBinding.Use;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.uxpsystems.assignement.exception.UserException;
 import com.uxpsystems.assignement.model.User;
@@ -36,15 +31,13 @@ public class UserController {
 
 	@GetMapping("/users/{id}")
 	public User getUser(@PathVariable long id) {
-		User user = new User();
-		user.setId(id);
+		Optional<User> user = userService.getUserById(id);
 
-		Optional<User> optional = userService.getUserById(user);
+		if (!user.isPresent()) {
+			throw new UserException("Unable to find user: ID = " + id);
+		}
 
-//		if (!optional.isPresent())
-//			throw new UserException("id-" + id);
-
-		return optional.get();
+		return user.get();
 	}
 
 	@DeleteMapping("/users/{id}")
@@ -55,28 +48,19 @@ public class UserController {
 	}
 
 	@PostMapping("/users")
-	public ResponseEntity<Object> saveUser(@RequestBody User user) {
-		User savedUser = userService.saveUser(user);
-
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedUser.getId())
-				.toUri();
-
-		return ResponseEntity.created(location).build();
-
+	public User saveUser(@RequestBody User user) {
+		return userService.saveUser(user);
 	}
 
 	@PutMapping("/users/{id}")
-	public ResponseEntity<Object> updateUSer(@RequestBody User user, @PathVariable long id) {
-		user.setId(id);
-		Optional<User> savedUSer = userService.getUserById(user);
+	public User updateUSer(@RequestBody User user, @PathVariable long id) {
+		Optional<User> savedUSer = userService.getUserById(id);
 
-		if (! savedUSer.isPresent())
-			return ResponseEntity.notFound().build();
-		else {
-			userService.saveUser(user);
+		if (!savedUSer.isPresent()) {
+			throw new UserException("Unable to find user: ID = " + id);
 		}
 
-		return ResponseEntity.noContent().build();
+		return userService.saveUser(user);
 	}
 
 }
