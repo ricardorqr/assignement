@@ -49,19 +49,33 @@ public class UserController {
 
 	@PostMapping("/users")
 	public User saveUser(@RequestBody User user) {
-		try {
-			return userService.saveUser(user);
-		} catch (Exception e) {
-			throw new UserException(e.getMessage());
+		Optional<User> savedUser = userService.getUserById(user.getId());
+
+		if (savedUser.isPresent() && savedUser.get().equals(user)) {
+			throw new UserException("User has saved already : ID = " + savedUser.get().getId());
 		}
+
+		savedUser = userService.getUserByUsername(user.getUsername());
+
+		if (savedUser.isPresent() && savedUser.get().getPassword().equals(user.getPassword())) {
+			throw new UserException("User has savedalready: Username = " + savedUser.get().getUsername());
+		}
+
+		return userService.saveUser(user);
 	}
 
 	@PutMapping("/users/{id}")
 	public User updateUSer(@RequestBody User user, @PathVariable long id) {
-		Optional<User> savedUSer = userService.getUserById(id);
+		Optional<User> savedUser = userService.getUserById(id);
 
-		if (!savedUSer.isPresent()) {
-			throw new UserException("Unable to find user: ID = " + id);
+		if (!savedUser.isPresent()) {
+			throw new UserException("User already has saved: ID = " + savedUser.get().getId());
+		}
+
+		savedUser = userService.getUserByUsername(user.getUsername());
+
+		if (!savedUser.isPresent()) {
+			throw new UserException("User already has saved: USername = " + savedUser.get().getUsername());
 		}
 
 		return userService.saveUser(user);

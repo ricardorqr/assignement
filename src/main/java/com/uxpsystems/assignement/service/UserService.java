@@ -23,12 +23,16 @@ public class UserService {
 	public Optional<User> getUserById(long id) {
 		return userDAO.findById(id);
 	}
+	
+	public Optional<User> getUserByUsername(String username) {
+		return userDAO.findByUsername(username);
+	}
 
 	public void deleteUser(User user) {
 		userDAO.delete(user);
 	}
 
-	public User saveUser(User user) throws UserException {
+	public User saveUser(User user) {
 		return userDAO.save(user);
 	}
 
