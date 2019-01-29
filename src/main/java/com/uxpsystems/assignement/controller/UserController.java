@@ -21,7 +21,7 @@ import com.uxpsystems.assignement.service.UserService;
 
 @RestController
 @RequestMapping("/api")
-//@CacheConfig(cacheNames = { "users" })
+@CacheConfig(cacheNames = { "users" })
 public class UserController {
 
 	@Autowired
@@ -32,7 +32,7 @@ public class UserController {
 		return userService.getAllUsers();
 	}
 
-//	@Cacheable(key="#id")
+	@Cacheable(key = "#id")
 	@GetMapping("/users/{id}")
 	public User getUser(@PathVariable Long id) {
 		Optional<User> user = userService.getUserById(id);
@@ -57,7 +57,7 @@ public class UserController {
 			if (checkUserByID(user)) {
 				throw new UserException("Already inserted value: ID = " + user.getId());
 			}
-			
+
 			if (checkUserByUsername(user)) {
 				throw new UserException("Already inserted value: Username = " + user.getUsername());
 			}
@@ -65,7 +65,6 @@ public class UserController {
 			if (checkUserByUsername(user)) {
 				throw new UserException("Already inserted value: Username = " + user.getUsername());
 			}
-
 		}
 
 		return userService.saveUser(user);
@@ -85,10 +84,10 @@ public class UserController {
 		Optional<User> savedUser = userService.getUserByUsername(user.getUsername());
 		return savedUser.isPresent() && savedUser.get().getUsername().equals(user.getUsername());
 	}
-	
+
 	private boolean checkUserByID(User user) {
 		Optional<User> savedUser = userService.getUserById(user.getId());
 		return savedUser.isPresent() && savedUser.get().equals(user);
 	}
-	
+
 }
