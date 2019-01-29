@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import com.uxpsystems.assignement.service.UserService;
 
 @RestController
 @RequestMapping("/api")
+//@CacheConfig(cacheNames = { "users" })
 public class UserController {
 
 	@Autowired
@@ -29,8 +32,9 @@ public class UserController {
 		return userService.getAllUsers();
 	}
 
+//	@Cacheable(key="#id")
 	@GetMapping("/users/{id}")
-	public User getUser(@PathVariable long id) {
+	public User getUser(@PathVariable Long id) {
 		Optional<User> user = userService.getUserById(id);
 
 		if (!user.isPresent()) {
@@ -41,7 +45,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/users/{id}")
-	public void deleteUser(@PathVariable long id) {
+	public void deleteUser(@PathVariable Long id) {
 		User user = new User();
 		user.setId(id);
 		userService.deleteUser(user);
@@ -49,36 +53,42 @@ public class UserController {
 
 	@PostMapping("/users")
 	public User saveUser(@RequestBody User user) {
-		Optional<User> savedUser = userService.getUserById(user.getId());
+		if (user.getId() != null) {
+			if (checkUserByID(user)) {
+				throw new UserException("Already inserted value: ID = " + user.getId());
+			}
+			
+			if (checkUserByUsername(user)) {
+				throw new UserException("Already inserted value: Username = " + user.getUsername());
+			}
+		} else {
+			if (checkUserByUsername(user)) {
+				throw new UserException("Already inserted value: Username = " + user.getUsername());
+			}
 
-		if (savedUser.isPresent() && savedUser.get().equals(user)) {
-			throw new UserException("User has saved already : ID = " + savedUser.get().getId());
-		}
-
-		savedUser = userService.getUserByUsername(user.getUsername());
-
-		if (savedUser.isPresent() && savedUser.get().getPassword().equals(user.getPassword())) {
-			throw new UserException("User has savedalready: Username = " + savedUser.get().getUsername());
 		}
 
 		return userService.saveUser(user);
 	}
 
 	@PutMapping("/users/{id}")
-	public User updateUSer(@RequestBody User user, @PathVariable long id) {
-		Optional<User> savedUser = userService.getUserById(id);
-
-		if (!savedUser.isPresent()) {
-			throw new UserException("User already has saved: ID = " + savedUser.get().getId());
+	public User updateUSer(@RequestBody User user, @PathVariable Long id) {
+		if (checkUserByUsername(user)) {
+			throw new UserException("Already inserted value: Username = " + user.getUsername());
 		}
 
-		savedUser = userService.getUserByUsername(user.getUsername());
-
-		if (!savedUser.isPresent()) {
-			throw new UserException("User already has saved: USername = " + savedUser.get().getUsername());
-		}
-
+		user.setId(id);
 		return userService.saveUser(user);
 	}
 
+	private boolean checkUserByUsername(User user) {
+		Optional<User> savedUser = userService.getUserByUsername(user.getUsername());
+		return savedUser.isPresent() && savedUser.get().getUsername().equals(user.getUsername());
+	}
+	
+	private boolean checkUserByID(User user) {
+		Optional<User> savedUser = userService.getUserById(user.getId());
+		return savedUser.isPresent() && savedUser.get().equals(user);
+	}
+	
 }

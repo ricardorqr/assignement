@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.uxpsystems.assignement.dao.UserDAO;
-import com.uxpsystems.assignement.exception.UserException;
 import com.uxpsystems.assignement.model.User;
 
 @Service
@@ -20,10 +19,10 @@ public class UserService {
 		return (List<User>) userDAO.findAll();
 	}
 
-	public Optional<User> getUserById(long id) {
+	public Optional<User> getUserById(Long id) {
 		return userDAO.findById(id);
 	}
-	
+
 	public Optional<User> getUserByUsername(String username) {
 		return userDAO.findByUsername(username);
 	}

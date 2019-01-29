@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.10.xsd">
+	<map name="users">
+		<max-size>300</max-size>
+		<eviction-policy>LFU</eviction-policy>
+		<time-to-live-seconds>60</time-to-live-seconds>
+		<eviction-percentage>25</eviction-percentage>
+	</map>
+</hazelcast>
