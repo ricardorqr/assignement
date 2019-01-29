@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           .antMatchers("/api/**").permitAll()
           .anyRequest().authenticated()
           .and()
+//          .csrf().disable() //permit all
           .httpBasic()
           .authenticationEntryPoint(authenticationEntryPoint);
  

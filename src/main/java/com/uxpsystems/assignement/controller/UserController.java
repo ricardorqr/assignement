@@ -71,13 +71,13 @@ public class UserController {
 	}
 
 	@PutMapping("/users/{id}")
-	public User updateUSer(@RequestBody User user, @PathVariable Long id) {
+	public User updateUser(@RequestBody User user, @PathVariable Long id) {
 		if (checkUserByUsername(user)) {
 			throw new UserException("Already inserted value: Username = " + user.getUsername());
 		}
 
 		user.setId(id);
-		return userService.saveUser(user);
+		return userService.updateUser(user);
 	}
 
 	private boolean checkUserByUsername(User user) {
