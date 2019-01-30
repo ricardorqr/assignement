@@ -15,41 +15,34 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//	@Override
-//	protected void configure(HttpSecurity http) throws Exception {
-//		http.authorizeRequests()
-//			.anyRequest()
-//			.permitAll()
-//			.and()
-//			.csrf()
-//			.disable();
-//	}
 	@Autowired
-    private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
- 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-          .withUser("admin").password(passwordEncoder().encode("admin"))
-          .authorities("ROLE_USER");
-    }
- 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-          .antMatchers("/api/**").permitAll()
-          .anyRequest().authenticated()
-          .and()
-//          .csrf().disable() //permit all
-          .httpBasic()
-          .authenticationEntryPoint(authenticationEntryPoint);
- 
-        http.addFilterAfter(new CustomFilter(),
-          BasicAuthenticationFilter.class);
-    }
- 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
+
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication()
+			.withUser("admin").password(passwordEncoder().encode("admin"))
+			.authorities("ROLE_USER");
+	}
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests()
+			.antMatchers("/assignement/swagger-ui.html", "/assignement")
+			.permitAll()
+			.anyRequest()
+			.authenticated()
+			.and()
+			.httpBasic()
+			.authenticationEntryPoint(authenticationEntryPoint)
+			.and().csrf().disable();
+
+		http.addFilterAfter(new CustomFilter(), BasicAuthenticationFilter.class);
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
 }
