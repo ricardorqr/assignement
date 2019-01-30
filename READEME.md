@@ -5,7 +5,7 @@ http://localhost:9090/assignement/swagger-ui.html
 2.1 Ecplise
 	Download the attached rar assignement.rar
 	Open Ecplise
-	Import the existing maven project and select the downloed file assignement.rar 
+	Import the existing maven project and select the downloaded file assignement.rar 
 	Execute class AssignementApplication.java as a Java Application
 	Open the URL http://localhost:9090/assignement/swagger-ui.html
 
