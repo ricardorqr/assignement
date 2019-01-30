@@ -20,7 +20,7 @@ import com.uxpsystems.assignement.model.User;
 import com.uxpsystems.assignement.service.UserService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/assignement") //http://localhost:9090/assignement
 @CacheConfig(cacheNames = { "users" })
 public class UserController {
 
